@@ -6,7 +6,7 @@
     android:layout_height="match_parent" >
 
 
-    <com.wondersgroup.testsdk.bubblechart.RingChart
+    <com.wondersgroup.testsdk.bubblechart.view.RingChart
         android:id="@+id/roundProgressBar2"
         android:layout_width="200dp"
         android:layout_height="200dp"

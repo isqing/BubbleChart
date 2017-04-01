@@ -19,7 +19,7 @@
  * @license http://www.apache.org/licenses/  Apache v2 License
  * @version 1.3
  */
-package com.wondersgroup.testsdk.bubblechart;
+package com.wondersgroup.testsdk.bubblechart.util;
 
 import android.graphics.PointF;
 

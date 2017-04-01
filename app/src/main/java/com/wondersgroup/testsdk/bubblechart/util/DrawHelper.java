@@ -20,7 +20,7 @@
  * @version 1.0
  */
 
-package com.wondersgroup.testsdk.bubblechart;
+package com.wondersgroup.testsdk.bubblechart.util;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

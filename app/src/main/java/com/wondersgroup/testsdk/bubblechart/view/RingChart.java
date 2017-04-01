@@ -1,7 +1,8 @@
-package com.wondersgroup.testsdk.bubblechart;
+package com.wondersgroup.testsdk.bubblechart.view;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,11 +11,14 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AlphaAnimation;
 
+
+import com.wondersgroup.testsdk.bubblechart.R;
+import com.wondersgroup.testsdk.bubblechart.util.DrawHelper;
+import com.wondersgroup.testsdk.bubblechart.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +31,10 @@ public class RingChart extends View {
     private String TAG = "RINGCHART";
 
 
-    private int firstColor;//第一种颜色
-    private int twoColor;//第二种颜色
-    private int textColor;//字体颜色
+//    private int firstColor;//第一种颜色
+//    private int twoColor;//第二种颜色
+//    private int textColor;//字体颜色
 
-    private int mRingWidth = 40;//圆环宽度
 
     private int mStrokeWidth = 30;//圆的粗细
 
@@ -43,17 +46,17 @@ public class RingChart extends View {
     //    private Rect centTextRect;//中间字的区域
     private Paint centerTextPaint;//中间字画笔
     private String centerText = "嘉定区";
-    private float centerTextSize = 40;//字体大小
+    private int centerTextSize = 40;//字体大小
     private Rect centerTextRect;
+    private int centerTextColor;
 
-    private float firstData = 89;//第一种占的数量
-    private float twoData = 24;//第二种占的数量
 
     private Paint dataPaint;//圆环上数字画笔
-    private float dataTextSize = 30;//数字字体大小
+    private int dataTextSize = 30;//数字字体大小
+    private int dataTextColor= Color.argb(200, 56, 78, 9) ;//数字字体大小
 
     //数据
-    private List<Float> dataList = new ArrayList<Float>();
+    private List<RingEntity> dataList = new ArrayList<RingEntity>();
     private float dataSum = 0;
 
     private int color[] = {Color.argb(200, 56, 718, 249), Color.argb(200, 156, 78, 49), Color.argb(200, 00, 78, 49),
@@ -61,7 +64,7 @@ public class RingChart extends View {
 
     private float animatedRingValue;//环形动画
     private int animatedCenterTextValue;//字体动画
-    private int animatedDataValue;
+    private int animatedDataValue=0;
 
     public RingChart(Context context) {
         this(context, null);
@@ -73,9 +76,8 @@ public class RingChart extends View {
 
     public RingChart(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        dataList.add(124f);
-        dataList.add(189f);
-
+        RingEntity ringEntity=new RingEntity(color[0],1f,"",color[0]);
+        dataList.add(ringEntity);
         Log.i("ds", "onMeasure: " + dataList.size());
     }
 
@@ -108,12 +110,45 @@ public class RingChart extends View {
         drawDataText(canvas);
     }
 
+    private void initView(Context context, AttributeSet attrs, int defStyleAttr){
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Ring,defStyleAttr,0);
+        int n=typedArray.getIndexCount();
+        for (int i=0;i<n;i++){
+            int attr=typedArray.getIndex(i);
+            switch (attr){
+                case R.styleable.Ring_centerTextColor:
+                    centerTextColor=typedArray.getColor(attr,centerTextColor);
+                    break;
+                case R.styleable.Ring_centerTextSize:
+                    centerTextSize=typedArray.getDimensionPixelSize(attr,centerTextSize);
+                    break;
+                case R.styleable.Ring_dataTextColor:
+                    dataTextColor=typedArray.getColor(attr,dataTextColor);
+                    break;
+                case R.styleable.Ring_dataTextSize:
+                    dataTextSize=typedArray.getDimensionPixelSize(attr,dataTextSize);
+                    break;
+                case R.styleable.Ring_mStrokeWidth:
+                    mStrokeWidth=typedArray.getDimensionPixelSize(attr,mStrokeWidth);
+                    break;
+                default:
+                    break;
+            }
+        }
+        typedArray.recycle();
+
+    }
     private void drawDataText(Canvas canvas) {
         dataPaint.setAntiAlias(true);
         dataPaint.setStyle(Paint.Style.FILL);
         dataPaint.setTextSize(dataTextSize);
         dataPaint.setStrokeWidth(1);
-        dataPaint.setARGB(animatedDataValue, 127, 115, 212);
+//        dataPaint.setAlpha(animatedDataValue);
+//        dataPaint.setColor(dataTextColor);
+        int red = (getDataTextColor() & 0xff0000) >> 16;
+        int green = (getDataTextColor() & 0x00ff00) >> 8;
+        int blue = (getDataTextColor() & 0x0000ff);
+        dataPaint.setARGB(animatedDataValue, red, green, blue);
 
         float dataPre = 0;
         float dataCurr = 0;
@@ -122,10 +157,10 @@ public class RingChart extends View {
             if (i == 0) {
                 dataPre = 0;
             } else {
-                dataPre += (dataList.get(i - 1) / sumData(dataList)) * 360;
+                dataPre += (dataList.get(i - 1).getRingData() / sumData(dataList)) * 360;
             }
             Log.i(TAG, "dataPre: " + dataPre);
-            dataCurr = (dataList.get(i) / sumData(dataList)) * 360 + dataPre;
+            dataCurr = (dataList.get(i).getRingData() / sumData(dataList)) * 360 + dataPre;
             Log.i(TAG, "dataCurr: " + dataCurr);
 
             //一四象限
@@ -133,14 +168,14 @@ public class RingChart extends View {
                 PointF point2 = MathHelper.getInstance().calcArcEndPointXY(
                         center, center, center -mStrokeWidth , dataPre + (dataCurr - dataPre) / 2);
                 //标识2
-                DrawHelper.getInstance().drawRotateText(String.valueOf(dataList.get(i)), point2.x, point2.y, 0,
+                DrawHelper.getInstance().drawRotateText(String.valueOf(dataList.get(i).getRingText()), point2.x, point2.y, 0,
                         canvas, dataPaint);
             }else {
                 //二三象限
                 PointF point2 = MathHelper.getInstance().calcArcEndPointXY(
                         center,center, center, dataPre + (dataCurr - dataPre) / 2);
                 //标识2
-                DrawHelper.getInstance().drawRotateText(String.valueOf(dataList.get(i)), point2.x, point2.y, 0,
+                DrawHelper.getInstance().drawRotateText(String.valueOf(dataList.get(i).getRingText()), point2.x, point2.y, 0,
                         canvas, dataPaint);
             }
         }
@@ -152,7 +187,10 @@ public class RingChart extends View {
         centerTextPaint.setStyle(Paint.Style.FILL);
         centerTextPaint.setTextSize(centerTextSize);
         centerTextPaint.setStrokeWidth(1);
-        centerTextPaint.setARGB(animatedCenterTextValue, 127, 115, 212);
+        int red = (getCenterTextColor() & 0xff0000) >> 16;
+        int green = (getCenterTextColor() & 0x00ff00) >> 8;
+        int blue = (getCenterTextColor() & 0x0000ff);
+        centerTextPaint.setARGB(animatedCenterTextValue, red, green, blue);
         canvas.drawText(centerText, center - centerTextPaint.measureText(centerText) / 2, center, centerTextPaint);
     }
 
@@ -163,15 +201,15 @@ public class RingChart extends View {
 
         for (int i = 0; i < dataList.size(); i++) {
 
-            float bfb = dataList.get(i) / sumData(dataList);
-            Log.i(TAG, dataList.get(i) + ", " + sumData(dataList) + "," + dataList.get(i) / sumData(dataList));
+            float bfb = dataList.get(i).getRingData() / sumData(dataList);
+            Log.i(TAG, dataList.get(i) + ", " + sumData(dataList) + "," + dataList.get(i).getRingData() / sumData(dataList));
             sweepPercent = bfb * 360;
             Log.i(TAG, "sweepPercent: " + sweepPercent);
             //第一段
             cyclePaint.setAntiAlias(true);
             cyclePaint.setStyle(Paint.Style.STROKE);
             cyclePaint.setStrokeWidth(mStrokeWidth);
-            cyclePaint.setColor(color[i]);
+            cyclePaint.setColor(dataList.get(i).getRingColor());
             if (Math.min(sweepPercent - 1, animatedRingValue - startPercent) >= 0) {
                 canvas.drawArc(oval, startPercent, Math.min(sweepPercent - 1, animatedRingValue - startPercent), false, cyclePaint);
 //                drawText(canvas,sweepPercent/2+startPercent,dataList.get(i)+"",sweepPercent);
@@ -180,15 +218,15 @@ public class RingChart extends View {
         }
     }
 
-    private float sumData(List<Float> list) {
+    private float sumData(List<RingEntity> list) {
         dataSum = 0;
         for (int i = 0; i < list.size(); i++) {
-            dataSum += list.get(i);
+            dataSum += list.get(i).getRingData();
         }
         return dataSum;
     }
 
-    public void setDataList(List<Float> dataList) {
+    public void setDataList(List<RingEntity> dataList) {
         Log.i("ds", dataList.size() + "");
         this.dataList.clear();
         this.dataList.addAll(dataList);
@@ -247,4 +285,75 @@ public class RingChart extends View {
 
     }
 
+    public int getmStrokeWidth() {
+        return mStrokeWidth;
+    }
+
+    public void setmStrokeWidth(int mStrokeWidth) {
+        this.mStrokeWidth = mStrokeWidth;
+    }
+
+    public Paint getDataPaint() {
+        return dataPaint;
+    }
+
+    public void setDataPaint(Paint dataPaint) {
+        this.dataPaint = dataPaint;
+    }
+
+    public Paint getCenterTextPaint() {
+        return centerTextPaint;
+    }
+
+    public void setCenterTextPaint(Paint centerTextPaint) {
+        this.centerTextPaint = centerTextPaint;
+    }
+
+    public Paint getCyclePaint() {
+        return cyclePaint;
+    }
+
+    public void setCyclePaint(Paint cyclePaint) {
+        this.cyclePaint = cyclePaint;
+    }
+
+    public String getCenterText() {
+        return centerText;
+    }
+
+    public void setCenterText(String centerText) {
+        this.centerText = centerText;
+    }
+
+    public float getCenterTextSize() {
+        return centerTextSize;
+    }
+
+    public void setCenterTextSize(int centerTextSize) {
+        this.centerTextSize = centerTextSize;
+    }
+
+    public float getDataTextSize() {
+        return dataTextSize;
+    }
+
+    public void setDataTextSize(int dataTextSize) {
+        this.dataTextSize = dataTextSize;
+    }
+
+    public int getCenterTextColor() {
+        return centerTextColor;
+    }
+
+    public void setCenterTextColor(int centerTextColor) {
+        this.centerTextColor = centerTextColor;
+    }
+
+    public int getDataTextColor() {
+        return dataTextColor;
+    }
+
+    public void setDataTextColor(int dataTextColor) {
+        this.dataTextColor = dataTextColor;
+    }
 }
