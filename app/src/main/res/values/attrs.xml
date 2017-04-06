@@ -7,4 +7,6 @@
         <attr name="dataTextSize" format="dimension" />
         <attr name="mStrokeWidth" format="dimension"/>
     </declare-styleable>
+
+
 </resources>

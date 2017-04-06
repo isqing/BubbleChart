@@ -31,11 +31,6 @@ public class RingChart extends View {
     private String TAG = "RINGCHART";
 
 
-//    private int firstColor;//第一种颜色
-//    private int twoColor;//第二种颜色
-//    private int textColor;//字体颜色
-
-
     private int mStrokeWidth = 30;//圆的粗细
 
     private RectF oval;//圆的区域
