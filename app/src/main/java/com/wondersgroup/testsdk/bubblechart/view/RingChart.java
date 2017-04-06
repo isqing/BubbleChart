@@ -25,6 +25,7 @@ import java.util.List;
 
 /**
  * Created by liyaqing on 2017/3/22.
+ * 自定义圆环
  */
 
 public class RingChart extends View {
@@ -74,6 +75,7 @@ public class RingChart extends View {
         RingEntity ringEntity=new RingEntity(color[0],1f,"",color[0]);
         dataList.add(ringEntity);
         Log.i("ds", "onMeasure: " + dataList.size());
+        initView(context,attrs,0);
     }
 
     @Override
