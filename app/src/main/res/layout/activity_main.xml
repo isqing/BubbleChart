@@ -6,9 +6,12 @@
     android:layout_height="match_parent" >
 
 
-    <com.wondersgroup.testsdk.bubblechart.view.BallView
-        android:id="@+id/roundProgressBar2"
+    <!--<com.wondersgroup.testsdk.bubblechart.view.BallView-->
+        <!--android:id="@+id/roundProgressBar2"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_centerInParent="true"/>-->
+    <com.wondersgroup.testsdk.bubblechart.view.Hash0valView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"/>
+        android:layout_height="match_parent" />
 </RelativeLayout>

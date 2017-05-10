@@ -282,6 +282,7 @@ public class RingChart extends View {
 
     }
 
+
     public int getmStrokeWidth() {
         return mStrokeWidth;
     }
