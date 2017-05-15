@@ -95,10 +95,21 @@ public class ChartUtil {
                 if (numberMap.containsKey(i)){
                     mPreRandom=numberMap.get(i);
                 }
-//                Log.i("maxCol", "getPoints: "+maxCol);
-//                Log.i("mPreRandom", "getPoints: "+mPreRandom);
+                Log.i("maxCol", "getPoints: "+maxCol);
+                Log.i("mPreRandom", "getPoints: "+mPreRandom);
+                Log.i("amount/maxRows", "getPoints: "+amount/maxRows);
 //                int mRandom = new Random().nextInt(0) * (maxCol-mPreRandom + 1);//生成0到maxCol，随机生成的每行的个数
-                int mRandom = new Random().nextInt(maxCol-mPreRandom)+1 ;//生成0到maxCol，随机生成的每行的个数
+
+                int mRandom =0;//随机生成一个的个数
+                int minCount=Math.min(amount/maxRows,maxCol);//当一行一个图形都没有时
+                if(minCount>mPreRandom){
+                    mRandom = new Random().nextInt(minCount-mPreRandom + 1-1+2)+1 ;//生成1到maxCol，随机生成的每行的个数
+                    Log.i("个数2：", "getPointsT: "+mRandom);
+                }else {
+                    mRandom=0;//当前行的个数超过最大个是
+                }
+
+
                 //当生成的随机数和之前的和大于图形总个数时
                 if (mSum + mRandom >= amount) {
                     mRandom = amount - mSum;
