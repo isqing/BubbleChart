@@ -14,7 +14,8 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
 
                 <com.wondersgroup.testsdk.bubblechart.view.Hash0valView
@@ -22,8 +23,5 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
             </ScrollView>
-    <!--<com.wondersgroup.testsdk.bubblechart.view.ScrollHashOvalView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"></com.wondersgroup.testsdk.bubblechart.view.ScrollHashOvalView>-->
 
 </RelativeLayout>

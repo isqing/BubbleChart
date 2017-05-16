@@ -28,16 +28,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         hash0valView=(Hash0valView)findViewById(R.id.hashOvalView);
         List<HashOval> hashOvals=new ArrayList<>();
-        for (int i=0;i<50;i++){
+        for (int i=0;i<40;i++){
             HashOval hashOval;
             if (i%2==0) {
-                 hashOval = new HashOval(Color.RED, 60, 40, "嘉定" + i, Color.WHITE, 34);
+                 hashOval = new HashOval(Color.RED,  "嘉定" + i, Color.WHITE, 12);
             }else {
-                hashOval = new HashOval(Color.BLUE, 60, 40, "徐汇" + i, Color.WHITE, 34);
+                hashOval = new HashOval(Color.BLUE,  "徐汇" + i, Color.WHITE, 12);
             }
             hashOvals.add(hashOval);
         }
         hash0valView.setHashOvalList(hashOvals);
+        hash0valView.setmRectX(60);
+        hash0valView.setmRectY(40);
         hash0valView.setOnClickChartItem(new Hash0valView.onClickChartItem() {
             @Override
             public void setOnClickChartItem(HashOval hashOval) {

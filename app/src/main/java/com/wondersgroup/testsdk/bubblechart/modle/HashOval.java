@@ -6,16 +6,13 @@ package com.wondersgroup.testsdk.bubblechart.modle;
 
 public class HashOval {
     private int chartColor;
-    private int chartW;
-    private int chartH;
+
     private String text;
     private int textColor;
     private int textSize;
 
-    public HashOval(int chartColor, int chartW, int chartH, String text, int textColor, int textSize) {
+    public HashOval(int chartColor,String text, int textColor, int textSize) {
         this.chartColor = chartColor;
-        this.chartW = chartW;
-        this.chartH = chartH;
         this.text = text;
         this.textColor = textColor;
         this.textSize = textSize;
@@ -58,19 +55,4 @@ public class HashOval {
         this.text = text;
     }
 
-    public int getChartW() {
-        return chartW;
-    }
-
-    public void setChartW(int chartW) {
-        this.chartW = chartW;
-    }
-
-    public int getChartH() {
-        return chartH;
-    }
-
-    public void setChartH(int chartH) {
-        this.chartH = chartH;
-    }
 }
