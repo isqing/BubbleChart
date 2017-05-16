@@ -22,7 +22,7 @@ public class ChartUtil {
     public static List<Point> getPoints(int w, int h, int mRectX, int mRectY,int mSpaceH, int amount){
         List<Point> pointList=new ArrayList<>();
         int maxRows =(int)Math.ceil(h/(mRectY+mSpaceH));//最大行数
-        int maxCol =(int)Math.floor(w/maxRows);//最大列数
+        int maxCol =Math.min(5,w/mRectX);//最大列数
         int mSum=0;//累计每次生成的个数
         Map<Integer,Integer> numberMap=new HashMap<>();
         Log.i("maxCol",maxCol+"");
@@ -33,20 +33,20 @@ public class ChartUtil {
                 if (numberMap.containsKey(i)){
                     mPreRandom=numberMap.get(i);
                 }
-//                int mRandom = new Random().nextInt(0) * (maxCol-mPreRandom + 1);//生成0到maxCol，随机生成的每行的个数
 
                 int mRandom =0;//随机生成一个的个数
 //                int minCount=Math.min(amount/maxRows,maxCol);//当一行一个图形都没有时
-                int tempCols=1;
-                if (amount>maxRows){
-                    tempCols=(int)Math.ceil(amount/maxRows);
-                }
-                int minCount=1;
-                if ( Math.min(tempCols,maxCol)>0) {
-                    minCount= Math.min(tempCols, maxCol);//当一行一个图形都没有时
-                }
-                if(minCount>mPreRandom){
-                    mRandom = new Random().nextInt(minCount-mPreRandom + 1-1+2)+1 ;//生成1到maxCol，随机生成的每行的个数
+//                int tempCols=1;
+//                if (amount>maxRows){
+//                    tempCols=(int)Math.ceil(amount/maxRows);
+//                }
+//                int minCount=1;
+//                if ( Math.min(tempCols,maxCol)>0) {
+//                    minCount= Math.min(tempCols, maxCol);//当一行一个图形都没有时
+//                }
+//                Log.i("minCount",minCount+"=="+mPreRandom+"==="+maxRows);
+                if(maxCol>mPreRandom){
+                    mRandom = new Random().nextInt(maxCol-mPreRandom + 1-1)+1 ;//生成1到maxCol，随机生成的每行的个数
                 }else {
                     mRandom=0;//当前行的个数超过最大个是
                 }

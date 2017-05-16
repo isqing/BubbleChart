@@ -34,8 +34,8 @@ public class Hash0valView extends View {
     private int width;
     private int height;
     private int mRectX = 140;
-    private int mRectY = 100;
-    private int pading = 10;
+    private int mRectY = 80;
+    private int pading = 30;
     private int mSpaceH = 100;
     private int charColor=Color.BLUE;
     private int textColor=Color.WHITE;
@@ -68,7 +68,9 @@ public class Hash0valView extends View {
                 .getSystemService(Context.WINDOW_SERVICE);
         int widthP = wm.getDefaultDisplay().getWidth();
         int heightP = wm.getDefaultDisplay().getHeight();
-        int heightZ=((int)Math.ceil(hashOvalList.size()/4))*(mRectY+mSpaceH);
+        int heightZ1=((int)Math.ceil(hashOvalList.size()/4))*(mRectY+mSpaceH);
+        int heightZ2= (int)Math.ceil(hashOvalList.size()/(widthP/mRectX))*(mRectY+mSpaceH);
+        int heightZ=Math.max(heightZ1,heightZ2);
         if (heightZ<=0||heightZ<heightP/2||hashOvalList.size()<=10){
                 heightZ=heightP/2;
         }
