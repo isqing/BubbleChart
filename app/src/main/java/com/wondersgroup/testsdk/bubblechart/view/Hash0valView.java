@@ -34,8 +34,8 @@ public class Hash0valView extends View {
     private int width;
     private int height;
     private int mRectX = 140;
-    private int mRectY = 80;
-    private int pading = 30;
+    private int mRectY = 100;
+    private int pading = 10;
     private int mSpaceH = 100;
     private int charColor=Color.BLUE;
     private int textColor=Color.WHITE;

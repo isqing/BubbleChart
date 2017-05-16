@@ -72,17 +72,32 @@ public class ChartUtil {
 //        }
         for (int i=0;i<numberMap.size();i++){
             int col=numberMap.get(i);//第i行的个数
+            int overW=w;//计算剩余的宽度
+            float averageW = w / col;//第一次取平均值
+            float startX=0;
+            float endX=0;
+            float mRandomX=0;
             for (int j=0;j<col;j++) {
-                float averageW = w / col;//取平均值
-                //计算x的范围
-                float startX=j*averageW;
-                float endX=(j+1)*averageW-mRectX;
+
+                if (j==0){
+                    startX=0;
+                    endX=averageW- mRectX;
+                }else {
+                    averageW=overW/(col-j);//计算剩余的平均宽度
+                    startX = mRandomX+mRectX;
+                    endX = mRandomX+mRectX + averageW - mRectX;
+                    Log.i("startX",startX+"==="+endX);
+                }
+
                 //计算y的范围
                 float startY=i*(mRectY+mSpaceH);
                 float endY=(i+1)*(mRectY+mSpaceH)-mRectY;
 
-                float mRandomX =startX + ((endX - startX) * new Random().nextFloat());//x坐标
-                float mRandomY =startY + ((endY - startY) * new Random().nextFloat());//x坐标
+                mRandomX=startX + ((endX - startX) * new Random().nextFloat());//x坐标
+                float mRandomY =startY + ((endY - startY) * new Random().nextFloat());//Y坐标
+//                Log.i("mRandomX",mRandomX+"==="+mRectX+"==="+overW);
+                overW=(int)(w-(mRandomX+mRectX));
+                Log.i("overW",""+overW);
                 Point point=new Point(mRandomX,mRandomY);
                 pointList.add(point);
             }
