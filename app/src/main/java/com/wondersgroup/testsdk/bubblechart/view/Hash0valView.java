@@ -1,22 +1,17 @@
 package com.wondersgroup.testsdk.bubblechart.view;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.Toast;
+import android.view.animation.AccelerateDecelerateInterpolator;
+
 
 import com.wondersgroup.testsdk.bubblechart.modle.HashOval;
 import com.wondersgroup.testsdk.bubblechart.modle.Point;
@@ -30,12 +25,11 @@ import java.util.List;
  * Created by liyaqing on 2017/5/8.
  */
 
+
 public class Hash0valView extends View {
-    private int width;
-    private int height;
     private int mRectX = 140;
     private int mRectY = 100;
-    private int pading = 10;
+    private int pading = 15;
     private int mSpaceH = 100;
     private int charColor=Color.BLUE;
     private int textColor=Color.WHITE;
@@ -46,6 +40,11 @@ public class Hash0valView extends View {
     private List<Point> pointList;
     private List<HashOval> hashOvalList;
     private onClickChartItem onClickChartItem;
+    private int animatedAplaRed;//红色动画
+    private int animatedAplaGreen;//绿色动画
+    private int heightZ;
+    private boolean isHalfScreen=false;//个数太少时
+    private int marginTop=50;//半屏时距离顶部100
 
     public Hash0valView(Context context) {
         this(context, null);
@@ -64,34 +63,23 @@ public class Hash0valView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        WindowManager wm = (WindowManager) getContext()
-                .getSystemService(Context.WINDOW_SERVICE);
-        int widthP = wm.getDefaultDisplay().getWidth();
-        int heightP = wm.getDefaultDisplay().getHeight();
+        int widthP = DensityUtil.getScreenWidth(getContext());
+        int heightP = DensityUtil.getScreenHeight(getContext());
         int heightZ1=((int)Math.ceil(hashOvalList.size()/4))*(mRectY+mSpaceH);
         int heightZ2= (int)Math.ceil(hashOvalList.size()/(widthP/mRectX))*(mRectY+mSpaceH);
-        int heightZ=Math.max(heightZ1,heightZ2);
-        if (heightZ<=0||heightZ<heightP/2||hashOvalList.size()<=10){
-                heightZ=heightP/2;
+        heightZ = Math.max(heightZ1,heightZ2)+mSpaceH;
+        if (heightZ <=0|| heightZ <heightP/2||hashOvalList.size()<=10){
+            heightZ =heightP;
+//            isHalfScreen=true;
         }
         setMeasuredDimension(widthP, heightZ);
-//        Log.i("width",width+"");
-//        Log.i("heightP",heightP+"");
         chartPait = new Paint();
         textPaint = new Paint();
-
+        initAnimatorRed();
+        initAnimatorGreen();
 
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        this.width = w;
-        this.height = h ;
-        Log.i("width",width+"");
-        Log.i("height",height+"");
-        pointList = ChartUtil.getPoints(width, height, mRectX, mRectY, mSpaceH, hashOvalList.size());
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -108,13 +96,27 @@ public class Hash0valView extends View {
             //画圆角矩形
             float left =  point.getX();
             float rigth = point.getX() + mRectX;
-            float top = point.getY();
+            float  top = point.getY();
             float bottom = point.getY() + mRectY;
+            if (isHalfScreen) {
+                top = point.getY()+marginTop;
+                bottom = point.getY() + mRectY+marginTop;
+            }
+
             mRect = new RectF(left+pading, top+pading, rigth-pading, bottom-pading);
 
             chartPait.setStyle(Paint.Style.FILL);//充满
             chartPait.setColor(hashOval.getChartColor());
             chartPait.setAntiAlias(true);// 设置画笔的锯齿效果
+            int red = (hashOval.getChartColor() & 0xff0000) >> 16;
+            int green = (hashOval.getChartColor() & 0x00ff00) >> 8;
+            int blue = (hashOval.getChartColor() & 0x0000ff);
+
+            if (hashOval.getIsAlpha()==0) {
+                chartPait.setARGB(animatedAplaGreen, red, green, blue);
+            }else {
+                chartPait.setARGB(animatedAplaRed, red, green, blue);
+            }
             canvas.drawRoundRect(mRect, 20, 20, chartPait);//第二个参数是x半径，第三个参数是y半径
             //写字
             Rect bounds = new Rect();
@@ -128,18 +130,26 @@ public class Hash0valView extends View {
             int textH = bounds.height();
 //            Log.i("textw",textW+","+mRectX);
 //            Log.i("textH",textH+","+mRectY);
-            float tLeft=left+pading+(mRectX-2*pading-textW)/2;
-            float tTop=top+pading+(mRectY-2*pading-textH);
+            float tLeft=left+(mRectX-textW)/2;
+            float tTop=top+(mRectY-textH);
             String text=hashOval.getText();
-            if (tLeft>mRectX-2*pading&text.length()>4){
+            if (text.length()>4){
                 text=text.substring(0,4);
                 textPaint.getTextBounds(text, 0, text.length(), bounds);
-                 textW = bounds.width();
-                 textH = bounds.height();
-                 tLeft=left+pading+(mRectX-2*pading-textW)/2;
-                 tTop=top+pading+(mRectY-2*pading-textH);
-            }
+                textW = bounds.width();
+                textH = bounds.height();
 
+                tLeft=left+(mRectX-textW)/2;
+                tTop=top+(mRectY-textH);
+            }
+            int textRed = (Color.WHITE & 0xff0000) >> 16;
+            int textGreen = (Color.WHITE & 0x00ff00) >> 8;
+            int textBlue = (Color.WHITE & 0x0000ff);
+            if (hashOval.getIsAlpha()==0) {
+                textPaint.setARGB(animatedAplaGreen, textRed, textGreen, textBlue);
+            }else {
+                textPaint.setARGB(animatedAplaRed, textRed, textGreen, textBlue);
+            }
             canvas.drawText(text,tLeft,tTop,textPaint);
 
         }
@@ -169,6 +179,20 @@ public class Hash0valView extends View {
 
     public void setHashOvalList(List<HashOval> hashOvalList) {
         this.hashOvalList = hashOvalList;
+//        pointList.clear();
+        int widthP =DensityUtil.getScreenWidth(getContext());
+        int heightP = DensityUtil.getScreenHeight(getContext());
+        int heightZ1=((int)Math.ceil(hashOvalList.size()/4))*(mRectY+mSpaceH);
+        int heightZ2= (int)Math.ceil(hashOvalList.size()/(widthP/mRectX))*(mRectY+mSpaceH);
+        heightZ = Math.max(heightZ1,heightZ2)+mSpaceH;
+        if (heightZ <=0|| heightZ <heightP/2||hashOvalList.size()<=10){
+            heightZ =heightP;
+            isHalfScreen=true;
+        }
+        pointList = ChartUtil.getPoints(widthP, heightZ, mRectX, mRectY, mSpaceH, hashOvalList.size());
+//        invalidate();
+        requestLayout();
+
     }
     private void setClick(float x,float y){
         for (int i = 0; i < pointList.size(); i++) {
@@ -179,6 +203,11 @@ public class Hash0valView extends View {
             float rigth = point.getX() + mRectX;
             float top = point.getY();
             float bottom = point.getY() + mRectY;
+            if (isHalfScreen){
+                 top = point.getY()+marginTop;
+                 bottom = point.getY() + mRectY+marginTop;
+            }
+
             if (x>left&x<rigth&y>top&y<bottom){
 //                Toast.makeText(getContext(),hashOval.getText(),Toast.LENGTH_SHORT).show();
                 onClickChartItem.setOnClickChartItem(hashOval);
@@ -192,7 +221,7 @@ public class Hash0valView extends View {
     }
 
     public interface onClickChartItem{
-        void setOnClickChartItem( HashOval hashOval);
+        void setOnClickChartItem(HashOval hashOval);
     }
 
     public int getmRectX() {
@@ -242,4 +271,38 @@ public class Hash0valView extends View {
     public void setTextSize(int textSize) {
         this.textSize = textSize;
     }
+    private void initAnimatorRed() {
+
+        //动画
+        ValueAnimator alphaAnimation=ValueAnimator.ofInt(0,255);
+//        AlphaAnimation alphaAnimation=new AlphaAnimation(0.1f,1.0f);
+        alphaAnimation.setDuration(2000);
+        alphaAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        alphaAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                animatedAplaRed = (int) valueAnimator.getAnimatedValue();
+                invalidate();
+            }
+        });
+        alphaAnimation.start();
+
+    }
+    private void initAnimatorGreen() {
+        //动画
+        ValueAnimator alphaAnimation=ValueAnimator.ofInt(0,80);
+//        AlphaAnimation alphaAnimation=new AlphaAnimation(0.1f,1.0f);
+        alphaAnimation.setDuration(3000);
+        alphaAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        alphaAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                animatedAplaGreen = (int) valueAnimator.getAnimatedValue();
+                invalidate();
+            }
+        });
+        alphaAnimation.start();
+
+    }
 }
+

@@ -1,4 +1,4 @@
-package com.wondersgroup.testsdk.bubblechart.view;
+package com.wondersgroup.testsdk.bubblechart.modle;
 
 /**
  * Created by liyaqing on 2017/4/1.

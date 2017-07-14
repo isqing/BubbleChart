@@ -1,12 +1,10 @@
 package com.wondersgroup.testsdk.bubblechart.util;
 
-import android.util.Log;
 
 import com.wondersgroup.testsdk.bubblechart.modle.Point;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -19,14 +17,12 @@ public class ChartUtil {
 
 
 
-    public static List<Point> getPoints(int w, int h, int mRectX, int mRectY,int mSpaceH, int amount){
+    public static List<Point> getPoints(int w, int h, int mRectX, int mRectY, int mSpaceH, int amount){
         List<Point> pointList=new ArrayList<>();
         int maxRows =(int)Math.ceil(h/(mRectY+mSpaceH));//最大行数
         int maxCol =Math.min(5,w/mRectX);//最大列数
         int mSum=0;//累计每次生成的个数
         Map<Integer,Integer> numberMap=new HashMap<>();
-        Log.i("maxCol",maxCol+"");
-        Log.i("maxRows",maxRows+"");
         while (mSum<amount) {
             for (int i = 0; i < maxRows; i++) {
                 int mPreRandom=0;//上次循环生成的值
@@ -35,16 +31,6 @@ public class ChartUtil {
                 }
 
                 int mRandom =0;//随机生成一个的个数
-//                int minCount=Math.min(amount/maxRows,maxCol);//当一行一个图形都没有时
-//                int tempCols=1;
-//                if (amount>maxRows){
-//                    tempCols=(int)Math.ceil(amount/maxRows);
-//                }
-//                int minCount=1;
-//                if ( Math.min(tempCols,maxCol)>0) {
-//                    minCount= Math.min(tempCols, maxCol);//当一行一个图形都没有时
-//                }
-//                Log.i("minCount",minCount+"=="+mPreRandom+"==="+maxRows);
                 if(maxCol>mPreRandom){
                     mRandom = new Random().nextInt(maxCol-mPreRandom + 1-1)+1 ;//生成1到maxCol，随机生成的每行的个数
                 }else {
@@ -85,8 +71,8 @@ public class ChartUtil {
                 }else {
                     averageW=overW/(col-j);//计算剩余的平均宽度
                     startX = mRandomX+mRectX;
-                    endX = mRandomX+mRectX + averageW - mRectX;
-                    Log.i("startX",startX+"==="+endX);
+                    endX = mRandomX+mRectX + averageW - mRectX-10;//10为间隔
+//                    Log.i("startX",startX+"==="+endX);
                 }
 
                 //计算y的范围
@@ -97,7 +83,7 @@ public class ChartUtil {
                 float mRandomY =startY + ((endY - startY) * new Random().nextFloat());//Y坐标
 //                Log.i("mRandomX",mRandomX+"==="+mRectX+"==="+overW);
                 overW=(int)(w-(mRandomX+mRectX));
-                Log.i("overW",""+overW);
+//                Log.i("overW",""+overW);
                 Point point=new Point(mRandomX,mRandomY);
                 pointList.add(point);
             }

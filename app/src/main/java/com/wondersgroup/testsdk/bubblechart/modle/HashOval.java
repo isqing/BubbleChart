@@ -10,18 +10,19 @@ public class HashOval {
     private String text;
     private int textColor;
     private int textSize;
+    private int isAlpha;//是否隐藏,0是，1否
 
-    public HashOval(int chartColor,String text, int textColor, int textSize) {
-        this.chartColor = chartColor;
-        this.text = text;
-        this.textColor = textColor;
-        this.textSize = textSize;
-    }
 
     public HashOval() {
     }
 
-
+    public HashOval(int chartColor, String text, int textColor, int textSize, int isAlpha) {
+        this.chartColor = chartColor;
+        this.text = text;
+        this.textColor = textColor;
+        this.textSize = textSize;
+        this.isAlpha = isAlpha;
+    }
 
     public int getChartColor() {
         return chartColor;
@@ -55,4 +56,11 @@ public class HashOval {
         this.text = text;
     }
 
+    public int getIsAlpha() {
+        return isAlpha;
+    }
+
+    public void setIsAlpha(int isAlpha) {
+        this.isAlpha = isAlpha;
+    }
 }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.github.lzyzsd.randomcolor.RandomColor;
+import com.wondersgroup.testsdk.bubblechart.modle.RingEntity;
 import com.wondersgroup.testsdk.bubblechart.util.DrawHelper;
 import com.wondersgroup.testsdk.bubblechart.util.MathHelper;
 
@@ -242,9 +243,9 @@ public class BallView extends View {
             } else {
                 dataPre += (dataList.get(i - 1).getRingData() / sumData(dataList)) * 360;
             }
-            Log.i(TAG, "dataPre: " + dataPre);
+//            Log.i(TAG, "dataPre: " + dataPre);
             dataCurr = (dataList.get(i).getRingData() / sumData(dataList)) * 360 + dataPre;
-            Log.i(TAG, "dataCurr: " + dataCurr);
+//            Log.i(TAG, "dataCurr: " + dataCurr);
 
             //一四象限
             if (((dataPre + (dataCurr - dataPre) / 2)>=0&&(dataPre + (dataCurr - dataPre) / 2)<90)||((dataPre + (dataCurr - dataPre) / 2)>=270&&(dataPre + (dataCurr - dataPre) / 2)<360)){
@@ -286,9 +287,9 @@ public class BallView extends View {
         for (int i = 0; i < dataList.size(); i++) {
 
             float bfb = dataList.get(i).getRingData() / sumData(dataList);
-            Log.i(TAG, dataList.get(i) + ", " + sumData(dataList) + "," + dataList.get(i).getRingData() / sumData(dataList));
+//            Log.i(TAG, dataList.get(i) + ", " + sumData(dataList) + "," + dataList.get(i).getRingData() / sumData(dataList));
             sweepPercent = bfb * 360;
-            Log.i(TAG, "sweepPercent: " + sweepPercent);
+//            Log.i(TAG, "sweepPercent: " + sweepPercent);
             //第一段
             cyclePaint.setAntiAlias(true);
             cyclePaint.setStyle(Paint.Style.STROKE);

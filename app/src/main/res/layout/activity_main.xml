@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<Button
+    android:text="随机矩形"
+    android:id="@+id/hashOvalView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:text="漂浮的圆环"
+        android:id="@+id/ballview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
-    <!--<com.wondersgroup.testsdk.bubblechart.view.BallView-->
-        <!--android:id="@+id/roundProgressBar2"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_centerInParent="true"/>-->
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true">
-
-
-                <com.wondersgroup.testsdk.bubblechart.view.Hash0valView
-                    android:id="@+id/hashOvalView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-            </ScrollView>
-
-</RelativeLayout>
+</LinearLayout>
